@@ -3,7 +3,7 @@
 
 #include <verdigris>
 
-namespace score-addon-unix-shell
+namespace unix_shell
 {
 struct SpecificSettings
 {
@@ -11,5 +11,5 @@ struct SpecificSettings
 };
 }
 
-Q_DECLARE_METATYPE(score-addon-unix-shell::SpecificSettings)
-W_REGISTER_ARGTYPE(score-addon-unix-shell::SpecificSettings)
+Q_DECLARE_METATYPE(unix_shell::SpecificSettings)
+W_REGISTER_ARGTYPE(unix_shell::SpecificSettings)

@@ -13,9 +13,9 @@
 
 #include <wobjectimpl.h>
 
-W_OBJECT_IMPL(score-addon-unix-shell::DeviceImplementation)
+W_OBJECT_IMPL(unix_shell::DeviceImplementation)
 
-namespace score-addon-unix-shell
+namespace unix_shell
 {
 DeviceImplementation::DeviceImplementation(
     const Device::DeviceSettings& settings,
@@ -41,10 +41,10 @@ bool DeviceImplementation::reconnect()
   {
     const auto& set
         = m_settings.deviceSpecificSettings.value<SpecificSettings>();
-    qDebug() << "score-addon-unix-shell created with: " << set.control;
+    qDebug() << "score_addon_unix_shell created with: " << set.control;
 
     // Needed by most protocols:
-    auto& ctx = m_ctx.plugin<Explorer::DeviceDocumentPlugin>().asioContext;
+    auto& ctx = m_ctx.plugin<Explorer::DeviceDocumentPlugin>().networkContext();
 
     auto protocol = std::make_unique<ossia::net::multiplex_protocol>();
     auto dev = std::make_unique<ossia::net::generic_device>(
@@ -55,11 +55,11 @@ bool DeviceImplementation::reconnect()
   }
   catch (const std::runtime_error& e)
   {
-    qDebug() << "score-addon-unix-shell error: " << e.what();
+    qDebug() << "score_addon_unix_shell error: " << e.what();
   }
   catch (...)
   {
-    qDebug() << "score-addon-unix-shell error";
+    qDebug() << "score_addon_unix_shell error";
   }
 
   return connected();

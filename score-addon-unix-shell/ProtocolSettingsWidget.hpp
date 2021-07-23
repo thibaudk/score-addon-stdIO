@@ -12,7 +12,7 @@ class QSpinBox;
 class QTableWidget;
 class QPushButton;
 
-namespace score-addon-unix-shell
+namespace unix_shell
 {
 class ProtocolSettingsWidget final : public Device::ProtocolSettingsWidget
 {

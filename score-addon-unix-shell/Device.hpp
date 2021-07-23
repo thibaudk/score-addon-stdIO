@@ -1,7 +1,7 @@
 #pragma once
 #include <Device/Protocol/DeviceInterface.hpp>
 
-namespace score-addon-unix-shell
+namespace unix_shell
 {
 class DeviceImplementation final : public Device::OwningDeviceInterface
 {

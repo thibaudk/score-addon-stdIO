@@ -28,15 +28,15 @@
 
 #include <wobjectimpl.h>
 
-W_OBJECT_IMPL(score-addon-unix-shell::ProtocolSettingsWidget)
+W_OBJECT_IMPL(unix_shell::ProtocolSettingsWidget)
 
-namespace score-addon-unix-shell
+namespace unix_shell
 {
 ProtocolSettingsWidget::ProtocolSettingsWidget(QWidget* parent)
     : Device::ProtocolSettingsWidget(parent)
 {
   m_deviceNameEdit = new State::AddressFragmentLineEdit{this};
-  m_deviceNameEdit->setText("score-addon-unix-shell");
+  m_deviceNameEdit->setText("Shell");
 
   m_control = new QSpinBox{this};
   m_control->setRange(1, 65535);

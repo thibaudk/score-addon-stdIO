@@ -4,27 +4,27 @@
 #include <score/serialization/JSONVisitor.hpp>
 
 template <>
-void DataStreamReader::read(const score-addon-unix-shell::SpecificSettings& n)
+void DataStreamReader::read(const unix_shell::SpecificSettings& n)
 {
   m_stream << n.control;
   insertDelimiter();
 }
 
 template <>
-void DataStreamWriter::write(score-addon-unix-shell::SpecificSettings& n)
+void DataStreamWriter::write(unix_shell::SpecificSettings& n)
 {
   m_stream >> n.control;
   checkDelimiter();
 }
 
 template <>
-void JSONReader::read(const score-addon-unix-shell::SpecificSettings& n)
+void JSONReader::read(const unix_shell::SpecificSettings& n)
 {
   obj["Control"] = n.control;
 }
 
 template <>
-void JSONWriter::write(score-addon-unix-shell::SpecificSettings& n)
+void JSONWriter::write(unix_shell::SpecificSettings& n)
 {
   n.control <<= obj["Control"];
 }

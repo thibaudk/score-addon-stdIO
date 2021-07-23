@@ -11,15 +11,15 @@
 #include <utility>
 #include <vector>
 
-class score_addon_score-addon-unix-shell final
+class score_addon_unix_shell final
     : public score::Plugin_QtInterface
     , public score::FactoryInterface_QtInterface
 {
   SCORE_PLUGIN_METADATA(1, "c7cdca9c-1f41-4fbb-a195-d29b1326506a")
 
 public:
-  score_addon_score-addon-unix-shell();
-  ~score_addon_score-addon-unix-shell() override;
+  score_addon_unix_shell();
+  ~score_addon_unix_shell() override;
 
 private:
   std::vector<std::unique_ptr<score::InterfaceBase>> factories(

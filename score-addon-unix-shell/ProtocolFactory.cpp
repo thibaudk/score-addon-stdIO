@@ -15,17 +15,17 @@
 #include <QFormLayout>
 #include <QObject>
 
-namespace score-addon-unix-shell
+namespace unix_shell
 {
 
 QString ProtocolFactory::prettyName() const noexcept
 {
-  return QObject::tr("score-addon-unix-shell");
+  return QObject::tr("Shell");
 }
 
 QString ProtocolFactory::category() const noexcept
 {
-  return StandardCategories::lights;
+  return StandardCategories::util;
 }
 
 Device::DeviceEnumerator*
@@ -36,9 +36,10 @@ ProtocolFactory::getEnumerator(const score::DocumentContext& ctx) const
 
 Device::DeviceInterface* ProtocolFactory::makeDevice(
     const Device::DeviceSettings& settings,
+    const Explorer::DeviceDocumentPlugin& plugin,
     const score::DocumentContext& ctx)
 {
-  return new score-addon-unix-shell::DeviceImplementation{settings, ctx};
+  return new unix_shell::DeviceImplementation{settings, ctx};
 }
 
 const Device::DeviceSettings& ProtocolFactory::defaultSettings() const noexcept
@@ -47,7 +48,7 @@ const Device::DeviceSettings& ProtocolFactory::defaultSettings() const noexcept
   {
     Device::DeviceSettings s;
     s.protocol = concreteKey();
-    s.name = "score-addon-unix-shell";
+    s.name = "Shell";
     SpecificSettings settings;
     s.deviceSpecificSettings = QVariant::fromValue(settings);
     return s;

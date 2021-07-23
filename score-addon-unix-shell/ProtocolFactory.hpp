@@ -1,7 +1,7 @@
 #pragma once
 #include <Explorer/DefaultProtocolFactory.hpp>
 
-namespace score-addon-unix-shell
+namespace unix_shell
 {
 
 class ProtocolFactory final : public Protocols::DefaultProtocolFactory
@@ -15,6 +15,7 @@ class ProtocolFactory final : public Protocols::DefaultProtocolFactory
 
   Device::DeviceInterface* makeDevice(
       const Device::DeviceSettings& settings,
+      const Explorer::DeviceDocumentPlugin& plugin,
       const score::DocumentContext& ctx) override;
 
   const Device::DeviceSettings& defaultSettings() const noexcept override;
