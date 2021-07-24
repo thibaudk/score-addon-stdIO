@@ -41,7 +41,7 @@ bool DeviceImplementation::reconnect()
   {
     const auto& set
         = m_settings.deviceSpecificSettings.value<SpecificSettings>();
-    qDebug() << "score_addon_unix_shell created with: " << set.control;
+    qDebug() << "Shell created with: " << set.text;
 
     // Needed by most protocols:
     auto& ctx = m_ctx.plugin<Explorer::DeviceDocumentPlugin>().networkContext();
@@ -55,11 +55,11 @@ bool DeviceImplementation::reconnect()
   }
   catch (const std::runtime_error& e)
   {
-    qDebug() << "score_addon_unix_shell error: " << e.what();
+    qDebug() << "Shell error: " << e.what();
   }
   catch (...)
   {
-    qDebug() << "score_addon_unix_shell error";
+    qDebug() << "Shell error";
   }
 
   return connected();

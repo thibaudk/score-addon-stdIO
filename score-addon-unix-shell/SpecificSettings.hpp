@@ -7,7 +7,7 @@ namespace unix_shell
 {
 struct SpecificSettings
 {
-  int control{1234};
+  QString text;
 };
 }
 

@@ -26,6 +26,6 @@ public:
 
 private:
   QLineEdit* m_deviceNameEdit{};
-  QSpinBox* m_control{};
+  QCodeEditor* m_codeEdit{};
 };
 }
