@@ -25,7 +25,9 @@ add_library(score_addon_unix_shell
 )
 
 # Link
-target_link_libraries(score_addon_unix_shell PUBLIC score_plugin_engine)
+target_link_libraries(score_addon_unix_shell PUBLIC
+    score_plugin_engine
+    score_plugin_protocols)
 
 # Target-specific options
 setup_score_plugin(score_addon_unix_shell)

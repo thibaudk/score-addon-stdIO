@@ -7,6 +7,7 @@ namespace unix_shell
 {
 struct SpecificSettings
 {
+  QString path;
   QString text;
 };
 }

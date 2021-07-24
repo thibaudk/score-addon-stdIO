@@ -5,6 +5,7 @@
 #include "SpecificSettings.hpp"
 
 #include <State/Widgets/AddressFragmentLineEdit.hpp>
+#include <Protocols/LibraryDeviceEnumerator.hpp>
 
 #include <score/application/ApplicationContext.hpp>
 #include <score/widgets/SignalUtils.hpp>
@@ -31,7 +32,14 @@ QString ProtocolFactory::category() const noexcept
 Device::DeviceEnumerator*
 ProtocolFactory::getEnumerator(const score::DocumentContext& ctx) const
 {
-  return nullptr;
+  return new Protocols::LibraryDeviceEnumerator{
+      "Ossia.Shell",
+      {"*.qml"},
+      ProtocolFactory::static_concreteKey(),
+      [](const QByteArray& arr) {
+        return QVariant::fromValue(SpecificSettings{arr});
+      },
+      ctx};
 }
 
 Device::DeviceInterface* ProtocolFactory::makeDevice(

@@ -31,11 +31,15 @@ ProtocolSettingsWidget::ProtocolSettingsWidget(QWidget* parent)
   m_deviceNameEdit = new State::AddressFragmentLineEdit{this};
   m_deviceNameEdit->setText("Shell");
 
+  m_pathEdit = new State::AddressFragmentLineEdit{this};
+  m_pathEdit->setText("/bin/bash");
+
   m_codeEdit = Process::createScriptWidget("JS");
   m_codeEdit->setPlainText("");
 
   auto layout = new QFormLayout;
   layout->addRow(tr("Name"), m_deviceNameEdit);
+  layout->addRow(tr("Path"), m_pathEdit);
   layout->addRow(m_codeEdit);
 
   setLayout(layout);
@@ -51,6 +55,7 @@ Device::DeviceSettings ProtocolSettingsWidget::getSettings() const
   s.protocol = ProtocolFactory::static_concreteKey();
 
   SpecificSettings settings{};
+  settings.path = m_pathEdit->text();
   settings.text = m_codeEdit->toPlainText();
 
   s.deviceSpecificSettings = QVariant::fromValue(settings);

@@ -26,6 +26,7 @@ public:
 
 private:
   QLineEdit* m_deviceNameEdit{};
+  QLineEdit* m_pathEdit{};
   QCodeEditor* m_codeEdit{};
 };
 }
