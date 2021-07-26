@@ -13,6 +13,8 @@ score_common_setup()
 add_library(score_addon_unix_shell
   score-addon-unix-shell/Device.cpp
   score-addon-unix-shell/Device.hpp
+  score-addon-unix-shell/shell_protocol.cpp
+  score-addon-unix-shell/shell_protocol.hpp
   score-addon-unix-shell/ProtocolFactory.cpp
   score-addon-unix-shell/ProtocolFactory.hpp
   score-addon-unix-shell/ProtocolSettingsWidget.cpp

@@ -1,12 +1,16 @@
 #pragma once
 #include <score/application/ApplicationContext.hpp>
+
 #include <score/command/Command.hpp>
 #include <score/command/CommandGeneratorMap.hpp>
+
 #include <score/plugins/InterfaceList.hpp>
 #include <score/plugins/qt_interfaces/FactoryFamily_QtInterface.hpp>
 #include <score/plugins/qt_interfaces/FactoryInterface_QtInterface.hpp>
 #include <score/plugins/qt_interfaces/GUIApplicationPlugin_QtInterface.hpp>
 #include <score/plugins/qt_interfaces/PluginRequirements_QtInterface.hpp>
+
+#include <score-addon-unix-shell/ProtocolFactory.hpp>
 
 #include <utility>
 #include <vector>
