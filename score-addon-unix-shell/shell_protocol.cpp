@@ -1,18 +1,31 @@
 #include "shell_protocol.hpp"
 #include <wobjectimpl.h>
 
+W_OBJECT_IMPL(shell_wrapper)
+
+void shell_wrapper::write(QByteArray arg)
+{
+} E_SIGNAL(OSSIA_EXPORT, write, arg)
+
+void shell_wrapper::read(QByteArray arg)
+{
+} E_SIGNAL(OSSIA_EXPORT, read, arg)
+
 W_OBJECT_IMPL(shell_protocol)
+
 using shell_node = ossia::net::wrapped_node<shell_parameter_data, shell_parameter>;
 
-//namespace Protocols
-//{
 class Shell : public QObject
 {
 };
-//}
 
-shell_protocol::shell_protocol(const QByteArray& code)
-  : m_code{code}
+shell_wrapper::~shell_wrapper()
+{
+}
+
+shell_protocol::shell_protocol(const QString& program, const QByteArray& code)
+  : shell{program},
+    m_code{code}
 {
   m_engine = new QQmlEngine{this};
   m_component = new QQmlComponent{m_engine};
@@ -41,6 +54,9 @@ shell_protocol::shell_protocol(const QByteArray& code)
       ossia::net::device_base,
       shell_node,
       shell_protocol>(*m_device, ret.value<QJSValue>());
+
+      QObject::connect(&shell, &shell_wrapper::read,
+                       this, &shell_protocol::on_read);
       return;
     }
     case QQmlComponent::Status::Loading:
@@ -54,6 +70,47 @@ shell_protocol::shell_protocol(const QByteArray& code)
 
   this->moveToThread(&m_thread);
   m_thread.start();
+}
+
+void shell_protocol::on_read(const QByteArray& a)
+{
+  QVariant ret;
+  QMetaObject::invokeMethod(
+        m_object, "onMessage",
+        Q_RETURN_ARG(QVariant, ret),
+        Q_ARG(QVariant, a));
+
+  auto arr = ret.value<QJSValue>();
+  // an array of {address, value} objects
+  if (!arr.isArray())
+    return;
+
+  QJSValueIterator it(arr);
+  while (it.hasNext())
+  {
+   it.next();
+   auto val = it.value();
+   auto addr = val.property("address");
+   if (!addr.isString())
+     continue;
+
+   auto addr_txt = addr.toString().toStdString();
+   auto n = find_node(m_device->get_root_node(), addr_txt);
+   if (!n)
+     continue;
+
+   auto v = val.property("value");
+   if (v.isNull())
+     continue;
+
+   if (auto addr = n->get_parameter())
+   {
+     qDebug() << "Applied value"
+              << QString::fromStdString(value_to_pretty_string(
+                                          ossia::qt::value_from_js(addr->value(), v)));
+     addr->set_value(ossia::qt::value_from_js(addr->value(), v));
+   }
+  }
 }
 
 shell_protocol::~shell_protocol()
@@ -79,14 +136,3 @@ void shell_protocol::set_device(ossia::net::device_base &dev)
 bool shell_protocol::observe(ossia::net::parameter_base&, bool b) { return false; }
 
 bool shell_protocol::update(ossia::net::node_base& node_base) { return true; }
-
-shell_parameter_data::shell_parameter_data(const std::string& name)
-  : parameter_data{name}
-{
-}
-
-shell_parameter_data::shell_parameter_data(const QJSValue& val)
-  : parameter_data{ossia::qt::make_parameter_data(val)}
-  , shell_parameter_data_base{val}
-{
-}

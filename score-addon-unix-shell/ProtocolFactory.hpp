@@ -4,6 +4,10 @@
 namespace unix_shell
 {
 
+class Shell : public QObject
+{
+};
+
 class ProtocolFactory final : public Protocols::DefaultProtocolFactory
 {
   SCORE_CONCRETE("d46ec6a0-dffa-44a4-a366-56bcbdfc218d")

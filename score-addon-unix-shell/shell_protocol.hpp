@@ -5,39 +5,33 @@
 #include <QQmlComponent>
 #include <QObject>
 #include <QQmlContext>
+#include <QProcess>
 
 #include <ossia-qt/js_utilities.hpp>
 #include <ossia/network/generic/wrapped_parameter.hpp>
+#include <ossia/detail/logger.hpp>
 
 struct shell_parameter_data_base
 {
   shell_parameter_data_base() = default;
   shell_parameter_data_base(const shell_parameter_data_base&) = delete;
-  shell_parameter_data_base(shell_parameter_data_base&& other)
-    : read{std::move(other.read)}
-    , write{std::move(other.write)}
-  {
-  }
-
-  shell_parameter_data_base& operator=(const shell_parameter_data_base&) = delete;
-  shell_parameter_data_base& operator=(shell_parameter_data_base&&) = delete;
+  shell_parameter_data_base(shell_parameter_data_base&& other) = default;
+  shell_parameter_data_base& operator=(const shell_parameter_data_base&) = default;
+  shell_parameter_data_base& operator=(shell_parameter_data_base&&) = default;
 
   shell_parameter_data_base(const QJSValue& val)
-    : read{val.property("read")}
-    , write{val.property("write")}
   {
+    auto r = val.property("write");
+    if (r.isString())
+    {
+      write = r.toString();
+    }
+    else
+    {
+      write = val.property("name").toString();
+    }
   }
 
-  bool valid(const QJSValue& val) const noexcept
-  {
-    return !val.isUndefined() && !val.isNull();
-  }
-  bool valid() const noexcept
-  {
-    return valid(write) || valid(read);
-  }
-
-  QJSValue read;
   QJSValue write;
 };
 
@@ -52,25 +46,74 @@ struct shell_parameter_data final
   shell_parameter_data& operator=(const shell_parameter_data&) = delete;
   shell_parameter_data& operator=(shell_parameter_data&&) = delete;
 
-  shell_parameter_data(const std::string& name);
-
-  shell_parameter_data(const QJSValue& val);
-};
-
-class shell_protocol;
-struct shell_parameter final
-    : ossia::net::wrapped_parameter<shell_parameter_data>
-    , Nano::Observer
-{
-  using ossia::net::wrapped_parameter<shell_parameter_data>::wrapped_parameter;
-  ~shell_parameter() override
+  shell_parameter_data(const std::string& name)
+    : parameter_data{name}
   {
   }
 
-  void connect(ossia::net::parameter_base& s, shell_protocol& proto);
+  shell_parameter_data(const QJSValue& val)
+    : parameter_data{ossia::qt::make_parameter_data(val)}
+    , shell_parameter_data_base{val}
+  {
+  }
+
+  bool valid() const noexcept
+  {
+    if (type) return true;
+    return false;
+  }
 };
 
-using shell_node = ossia::net::wrapped_node<shell_parameter_data, shell_parameter>;
+class OSSIA_EXPORT shell_wrapper final
+    : public QObject
+{
+  W_OBJECT(shell_wrapper)
+
+  QProcess process;
+  QString path;
+  QStringList args;
+
+  void start(QByteArray arr = QByteArray()) {
+    process.start(path, args << arr);
+    ossia::logger().info(
+        "Started QProcess: {}", process.errorString().toStdString());
+  }
+
+public:
+  shell_wrapper(const QString& pgm) : process{}
+  {
+    args = pgm.split(' ');
+    path = args[0];
+    args.removeFirst();
+    start();
+
+    connect(this, &shell_wrapper::write, this,
+            &shell_wrapper::on_write, Qt::QueuedConnection);
+
+    connect(&process, &QProcess::readyRead, this,
+            &shell_wrapper::on_read, Qt::QueuedConnection);
+  }
+  ~shell_wrapper();
+
+  void write(QByteArray arg);
+  void read(QByteArray arg);
+
+  void on_write(QByteArray b)
+  {
+    if (process.state() == QProcess::NotRunning) start(b);
+    else process.write(b);
+  }; W_SLOT(on_write)
+
+  void on_read()
+  {
+    while(process.canReadLine())
+    {
+      read(process.readLine());
+    }
+  }; W_SLOT(on_read)
+};
+
+using shell_parameter = ossia::net::wrapped_parameter<shell_parameter_data>;
 
 class shell_protocol final
     : public QObject
@@ -79,7 +122,7 @@ class shell_protocol final
   W_OBJECT(shell_protocol)
 
   public:
-    shell_protocol(const QByteArray& code);
+    shell_protocol(const QString& program, const QByteArray& code);
 
   ~shell_protocol() override;
 
@@ -95,6 +138,7 @@ private:
   void set_device(ossia::net::device_base& dev) override;
   bool observe(ossia::net::parameter_base&, bool b) override;
   bool update(ossia::net::node_base& node_base) override;
+  void on_read(const QByteArray&);
 
   QThread m_thread;
   QQmlEngine* m_engine{};
@@ -102,9 +146,8 @@ private:
 
   ossia::net::device_base* m_device{};
   QObject* m_object{};
+  mutable shell_wrapper shell;
   QByteArray m_code;
 };
 
-Q_DECLARE_METATYPE(shell_parameter*)
-W_REGISTER_ARGTYPE(shell_parameter*)
 #endif // SHELL_PROTOCOL_H

@@ -51,7 +51,7 @@ namespace unix_shell
       // Needed by most protocols:
       auto& ctx = m_ctx.plugin<Explorer::DeviceDocumentPlugin>().networkContext();
 
-      auto protocol = std::make_unique<shell_protocol>(set.text.toUtf8());
+      auto protocol = std::make_unique<shell_protocol>(set.program, set.text.toUtf8());
       auto dev = std::make_unique<ossia::net::generic_device>(
             std::move(protocol), settings().name.toStdString());
 

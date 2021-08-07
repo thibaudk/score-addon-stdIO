@@ -6,27 +6,27 @@
 template <>
 void DataStreamReader::read(const unix_shell::SpecificSettings& n)
 {
-  m_stream << n.path << n.text;
+  m_stream << n.program << n.text;
   insertDelimiter();
 }
 
 template <>
 void DataStreamWriter::write(unix_shell::SpecificSettings& n)
 {
-  m_stream >> n.path >> n.text;
+  m_stream >> n.program >> n.text;
   checkDelimiter();
 }
 
 template <>
 void JSONReader::read(const unix_shell::SpecificSettings& n)
 {
-  obj["Path"] = n.path;
+  obj["Program"] = n.program;
   obj["Text"] = n.text;
 }
 
 template <>
 void JSONWriter::write(unix_shell::SpecificSettings& n)
 {
-  n.path <<= obj["Path"];
+  n.program <<= obj["Program"];
   n.text <<= obj["Text"];
 }
