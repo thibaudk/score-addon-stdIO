@@ -3,7 +3,7 @@
 
 #include <verdigris>
 
-namespace unix_shell
+namespace stdIO
 {
 struct SpecificSettings
 {
@@ -12,5 +12,5 @@ struct SpecificSettings
 };
 }
 
-Q_DECLARE_METATYPE(unix_shell::SpecificSettings)
-W_REGISTER_ARGTYPE(unix_shell::SpecificSettings)
+Q_DECLARE_METATYPE(stdIO::SpecificSettings)
+W_REGISTER_ARGTYPE(stdIO::SpecificSettings)

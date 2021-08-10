@@ -4,32 +4,32 @@ if(NOT TARGET score_lib_base)
   include("${SCORE_SOURCE_DIR}/cmake/ScoreExternalAddon.cmake")
 endif()
 
-project(score_addon_unix_shell LANGUAGES CXX)
+project(score_addon_stdIO LANGUAGES CXX)
 
 # General initialization
 score_common_setup()
 
 # Creation of the library
-add_library(score_addon_unix_shell
-  score-addon-unix-shell/Device.cpp
-  score-addon-unix-shell/Device.hpp
-  score-addon-unix-shell/shell_protocol.cpp
-  score-addon-unix-shell/shell_protocol.hpp
-  score-addon-unix-shell/ProtocolFactory.cpp
-  score-addon-unix-shell/ProtocolFactory.hpp
-  score-addon-unix-shell/ProtocolSettingsWidget.cpp
-  score-addon-unix-shell/ProtocolSettingsWidget.hpp
-  score-addon-unix-shell/SpecificSettings.hpp
-  score-addon-unix-shell/SpecificSettingsSerialization.cpp
+add_library(score_addon_stdIO
+  score-addon-stdIO/Device.cpp
+  score-addon-stdIO/Device.hpp
+  score-addon-stdIO/stdIO_protocol.cpp
+  score-addon-stdIO/stdIO_protocol.hpp
+  score-addon-stdIO/ProtocolFactory.cpp
+  score-addon-stdIO/ProtocolFactory.hpp
+  score-addon-stdIO/ProtocolSettingsWidget.cpp
+  score-addon-stdIO/ProtocolSettingsWidget.hpp
+  score-addon-stdIO/SpecificSettings.hpp
+  score-addon-stdIO/SpecificSettingsSerialization.cpp
 
-  score_addon_unix_shell.hpp
-  score_addon_unix_shell.cpp
+  score_addon_stdIO.hpp
+  score_addon_stdIO.cpp
 )
 
 # Link
-target_link_libraries(score_addon_unix_shell PUBLIC
+target_link_libraries(score_addon_stdIO PUBLIC
     score_plugin_engine
     score_plugin_protocols)
 
 # Target-specific options
-setup_score_plugin(score_addon_unix_shell)
+setup_score_plugin(score_addon_stdIO)

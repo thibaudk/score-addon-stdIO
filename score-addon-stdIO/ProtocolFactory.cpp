@@ -16,12 +16,12 @@
 #include <QFormLayout>
 #include <QObject>
 
-namespace unix_shell
+namespace stdIO
 {
 
 QString ProtocolFactory::prettyName() const noexcept
 {
-  return QObject::tr("Shell");
+  return QObject::tr("stdIO");
 }
 
 QString ProtocolFactory::category() const noexcept
@@ -33,7 +33,7 @@ Device::DeviceEnumerator*
 ProtocolFactory::getEnumerator(const score::DocumentContext& ctx) const
 {
   return new Protocols::LibraryDeviceEnumerator{
-      "Ossia.Shell",
+      "Ossia.stdIO",
       {"*.qml"},
       ProtocolFactory::static_concreteKey(),
       [](const QByteArray& arr) {
@@ -47,7 +47,7 @@ Device::DeviceInterface* ProtocolFactory::makeDevice(
     const Explorer::DeviceDocumentPlugin& plugin,
     const score::DocumentContext& ctx)
 {
-  return new unix_shell::DeviceImplementation{settings, ctx};
+  return new DeviceImplementation{settings, ctx};
 }
 
 const Device::DeviceSettings& ProtocolFactory::defaultSettings() const noexcept
@@ -56,7 +56,7 @@ const Device::DeviceSettings& ProtocolFactory::defaultSettings() const noexcept
   {
     Device::DeviceSettings s;
     s.protocol = concreteKey();
-    s.name = "Shell";
+    s.name = "stdIO";
     SpecificSettings settings;
     s.deviceSpecificSettings = QVariant::fromValue(settings);
     return s;

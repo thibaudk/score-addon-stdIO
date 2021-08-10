@@ -1,5 +1,5 @@
 #include "Device.hpp"
-#include "shell_protocol.hpp"
+#include "stdIO_protocol.hpp"
 #include "SpecificSettings.hpp"
 
 #include <Explorer/DocumentPlugin/DeviceDocumentPlugin.hpp>
@@ -18,9 +18,9 @@
 
 #include <wobjectimpl.h>
 
-W_OBJECT_IMPL(unix_shell::DeviceImplementation)
+W_OBJECT_IMPL(stdIO::DeviceImplementation)
 
-namespace unix_shell
+namespace stdIO
 {
   DeviceImplementation::DeviceImplementation(
         const Device::DeviceSettings& settings,
@@ -46,12 +46,12 @@ namespace unix_shell
     {
       const auto& set
           = m_settings.deviceSpecificSettings.value<SpecificSettings>();
-      qDebug() << "Shell created with: " << set.text;
+      qDebug() << "stdIO created with: " << set.text;
 
       // Needed by most protocols:
       auto& ctx = m_ctx.plugin<Explorer::DeviceDocumentPlugin>().networkContext();
 
-      auto protocol = std::make_unique<shell_protocol>(set.program, set.text.toUtf8());
+      auto protocol = std::make_unique<ossia::net::stdIO_protocol>(set.program, set.text.toUtf8());
       auto dev = std::make_unique<ossia::net::generic_device>(
             std::move(protocol), settings().name.toStdString());
 
@@ -60,11 +60,11 @@ namespace unix_shell
     }
     catch (const std::runtime_error& e)
     {
-      qDebug() << "Shell error: " << e.what();
+      qDebug() << "stdIO error: " << e.what();
     }
     catch (...)
     {
-      qDebug() << "Shell error";
+      qDebug() << "stdIO error";
     }
 
     return connected();

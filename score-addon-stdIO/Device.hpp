@@ -1,7 +1,7 @@
 #pragma once
 #include <Device/Protocol/DeviceInterface.hpp>
 
-namespace unix_shell
+namespace stdIO
 {
 class DeviceImplementation final : public Device::OwningDeviceInterface
 {

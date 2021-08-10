@@ -1,10 +1,10 @@
 #pragma once
 #include <Explorer/DefaultProtocolFactory.hpp>
 
-namespace unix_shell
+namespace stdIO
 {
 
-class Shell : public QObject
+class stdIO : public QObject
 {
 };
 

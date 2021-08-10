@@ -21,15 +21,16 @@
 
 #include <wobjectimpl.h>
 
-W_OBJECT_IMPL(unix_shell::ProtocolSettingsWidget)
-
-namespace unix_shell
+namespace stdIO
 {
+
+W_OBJECT_IMPL(ProtocolSettingsWidget)
+
 ProtocolSettingsWidget::ProtocolSettingsWidget(QWidget* parent)
     : Device::ProtocolSettingsWidget(parent)
 {
   m_deviceNameEdit = new State::AddressFragmentLineEdit{this};
-  m_deviceNameEdit->setText("Shell");
+  m_deviceNameEdit->setText("stdIO");
 
   m_programEdit = new State::AddressFragmentLineEdit{this};
   m_programEdit->setText("/bin/bash");

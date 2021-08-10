@@ -2,7 +2,7 @@
 #include <Device/Protocol/DeviceSettings.hpp>
 #include <Device/Protocol/ProtocolSettingsWidget.hpp>
 
-#include <score-addon-unix-shell/SpecificSettings.hpp>
+#include <score-addon-stdIO/SpecificSettings.hpp>
 
 #include <variant>
 #include <verdigris>
@@ -12,7 +12,7 @@ class QSpinBox;
 class QTableWidget;
 class QPushButton;
 
-namespace unix_shell
+namespace stdIO
 {
 class ProtocolSettingsWidget final : public Device::ProtocolSettingsWidget
 {
