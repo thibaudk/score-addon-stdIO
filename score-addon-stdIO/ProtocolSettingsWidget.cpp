@@ -30,10 +30,10 @@ ProtocolSettingsWidget::ProtocolSettingsWidget(QWidget* parent)
     : Device::ProtocolSettingsWidget(parent)
 {
   m_deviceNameEdit = new State::AddressFragmentLineEdit{this};
-  m_deviceNameEdit->setText("stdIO");
+  m_deviceNameEdit->setText("StdIO");
 
   m_programEdit = new State::AddressFragmentLineEdit{this};
-  m_programEdit->setText("/bin/bash");
+  m_programEdit->setText("/bin/bash -i");
 
   m_codeEdit = Process::createScriptWidget("JS");
   m_codeEdit->setPlainText("");
@@ -69,5 +69,8 @@ void ProtocolSettingsWidget::setSettings(
   m_deviceNameEdit->setText(settings.name);
   const auto& specif
       = settings.deviceSpecificSettings.value<SpecificSettings>();
+
+  m_programEdit->setText(specif.program);
+  m_codeEdit->setPlainText(specif.text);
 }
 }

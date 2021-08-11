@@ -21,7 +21,7 @@ namespace stdIO
 
 QString ProtocolFactory::prettyName() const noexcept
 {
-  return QObject::tr("stdIO");
+  return QObject::tr("StdIO");
 }
 
 QString ProtocolFactory::category() const noexcept
@@ -33,7 +33,7 @@ Device::DeviceEnumerator*
 ProtocolFactory::getEnumerator(const score::DocumentContext& ctx) const
 {
   return new Protocols::LibraryDeviceEnumerator{
-      "Ossia.stdIO",
+      "Ossia.StdIO",
       {"*.qml"},
       ProtocolFactory::static_concreteKey(),
       [](const QByteArray& arr) {
@@ -47,7 +47,7 @@ Device::DeviceInterface* ProtocolFactory::makeDevice(
     const Explorer::DeviceDocumentPlugin& plugin,
     const score::DocumentContext& ctx)
 {
-  return new DeviceImplementation{settings, ctx};
+  return new DeviceImplementation{settings};
 }
 
 const Device::DeviceSettings& ProtocolFactory::defaultSettings() const noexcept
@@ -56,7 +56,7 @@ const Device::DeviceSettings& ProtocolFactory::defaultSettings() const noexcept
   {
     Device::DeviceSettings s;
     s.protocol = concreteKey();
-    s.name = "stdIO";
+    s.name = "StdIO";
     SpecificSettings settings;
     s.deviceSpecificSettings = QVariant::fromValue(settings);
     return s;

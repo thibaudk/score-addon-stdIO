@@ -4,7 +4,7 @@
 namespace stdIO
 {
 
-class stdIO : public QObject
+class StdIO : public QObject
 {
 };
 

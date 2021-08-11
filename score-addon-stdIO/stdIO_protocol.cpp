@@ -1,23 +1,22 @@
 #include "stdIO_protocol.hpp"
-#include <wobjectimpl.h>
 
-namespace ossia
+#include <wobjectimpl.h>
+W_OBJECT_IMPL(stdIO::stdIO_wrapper)
+
+namespace stdIO
 {
-namespace net
-{
-W_OBJECT_IMPL(stdIO_wrapper)
+
 stdIO_wrapper::~stdIO_wrapper()
 {
-
+  if (process.state() == QProcess::Running) process.kill();
 }
 
-using stdIO_node = wrapped_node<stdIO_parameter_data, stdIO_parameter>;
-
 stdIO_protocol::stdIO_protocol(const QString& program, const QByteArray& code)
-  : stdIO{program}
+  : ossia::net::protocol_base(flags{})
+  , stdIO{program}
   , m_code{code}
 {
-  m_engine = new QQmlEngine{this};
+  m_engine = new QQmlEngine{};
   m_component = new QQmlComponent{m_engine};
 
   QObject::connect(
@@ -41,7 +40,7 @@ stdIO_protocol::stdIO_protocol(const QString& program, const QByteArray& code)
       QMetaObject::invokeMethod(
           m_object, "createTree", Q_RETURN_ARG(QVariant, ret));
       ossia::qt::create_device<
-      device_base,
+      ossia::net::device_base,
       stdIO_node,
       stdIO_protocol>(*m_device, ret.value<QJSValue>());
 
@@ -57,9 +56,6 @@ stdIO_protocol::stdIO_protocol(const QString& program, const QByteArray& code)
       return;
     }
   });
-
-  this->moveToThread(&m_thread);
-  m_thread.start();
 }
 
 void stdIO_protocol::on_read(const QByteArray& a)
@@ -105,15 +101,14 @@ void stdIO_protocol::on_read(const QByteArray& a)
 
 stdIO_protocol::~stdIO_protocol()
 {
-  m_thread.exit();
-  m_thread.wait();
+
 }
 
 stdIO_parameter_data stdIO_protocol::read_data(const QJSValue& js) { return js; }
 
-bool stdIO_protocol::pull(parameter_base&) { return false; }
+bool stdIO_protocol::pull(ossia::net::parameter_base&) { return false; }
 
-bool stdIO_protocol::push(const parameter_base& parameter_base, const ossia::value& v)
+bool stdIO_protocol::push(const ossia::net::parameter_base& parameter_base, const ossia::value& v)
 {
   auto& ad = dynamic_cast<const stdIO_parameter&>(parameter_base);
   auto str = ad.data().write;
@@ -145,8 +140,8 @@ bool stdIO_protocol::push(const parameter_base& parameter_base, const ossia::val
   }
   case ossia::val_type::VEC4F:
   {
-    auto& vec = v.get<ossia::vec2f>();
-    str.replace("$val", QString{"%1 %2"}.arg(vec[0]).arg(vec[1]).arg(vec[2]).arg(vec[3]));
+    auto& vec = v.get<ossia::vec4f>();
+    str.replace("$val", QString{"%1 %2 %3 %4"}.arg(vec[0]).arg(vec[1]).arg(vec[2]).arg(vec[3]));
     break;
   }
   case ossia::val_type::LIST:
@@ -164,17 +159,16 @@ bool stdIO_protocol::push(const parameter_base& parameter_base, const ossia::val
   return false;
 }
 
-bool stdIO_protocol::push_raw(const full_parameter_data& parameter_base)
+bool stdIO_protocol::push_raw(const ossia::net::full_parameter_data& parameter_base)
 { return false; }
 
-void stdIO_protocol::set_device(device_base &dev)
+void stdIO_protocol::set_device(ossia::net::device_base &dev)
 {
   m_device = &dev;
   m_component->setData(m_code, QUrl{});
 }
 
-bool stdIO_protocol::observe(parameter_base&, bool b) { return false; }
+bool stdIO_protocol::observe(ossia::net::parameter_base&, bool b) { return false; }
 
-bool stdIO_protocol::update(node_base& node_base) { return true; }
-}
+bool stdIO_protocol::update(ossia::net::node_base& node_base) { return true; }
 }

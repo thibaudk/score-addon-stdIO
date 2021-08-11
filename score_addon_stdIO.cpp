@@ -6,7 +6,7 @@
 
 score_addon_stdIO::score_addon_stdIO()
 {
-  qmlRegisterType<stdIO::stdIO>("Ossia", 1, 0, "stdIO");
+  qmlRegisterType<stdIO::StdIO>("Ossia", 1, 0, "StdIO");
   qRegisterMetaType<std::vector<ossia::net::node_base*>>(
       "std::vector<ossia::net::node_base*>");
 }
@@ -20,7 +20,8 @@ score_addon_stdIO::factories(
 {
   return instantiate_factories<
       score::ApplicationContext,
-      FW<Device::ProtocolFactory, stdIO::ProtocolFactory>>(ctx, key);
+      FW<Device::ProtocolFactory,
+      stdIO::ProtocolFactory>>(ctx, key);
 }
 
 #include <score/plugins/PluginInstances.hpp>

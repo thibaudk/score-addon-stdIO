@@ -16,17 +16,10 @@
 #include <QQmlEngine>
 #include <QThread>
 
-#include <wobjectimpl.h>
-
-W_OBJECT_IMPL(stdIO::DeviceImplementation)
-
 namespace stdIO
 {
-  DeviceImplementation::DeviceImplementation(
-        const Device::DeviceSettings& settings,
-        const score::DocumentContext& ctx)
+  DeviceImplementation::DeviceImplementation(const Device::DeviceSettings& settings)
     : OwningDeviceInterface{settings}
-    , m_ctx{ctx}
   {
     m_capas.canRefreshTree = true;
     m_capas.canAddNode = false;
@@ -46,17 +39,15 @@ namespace stdIO
     {
       const auto& set
           = m_settings.deviceSpecificSettings.value<SpecificSettings>();
-      qDebug() << "stdIO created with: " << set.text;
 
-      // Needed by most protocols:
-      auto& ctx = m_ctx.plugin<Explorer::DeviceDocumentPlugin>().networkContext();
-
-      auto protocol = std::make_unique<ossia::net::stdIO_protocol>(set.program, set.text.toUtf8());
+      auto protocol = std::make_unique<stdIO_protocol>(set.program, set.text.toUtf8());
       auto dev = std::make_unique<ossia::net::generic_device>(
             std::move(protocol), settings().name.toStdString());
 
       m_dev = std::move(dev);
       deviceChanged(nullptr, m_dev.get());
+
+      enableCallbacks();
     }
     catch (const std::runtime_error& e)
     {

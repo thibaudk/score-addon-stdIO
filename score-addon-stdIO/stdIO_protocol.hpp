@@ -1,20 +1,19 @@
-#ifndef SHELL_PROTOCOL_H
-#define SHELL_PROTOCOL_H
+#ifndef STDIO_PROTOCOL_H
+#define STDIO_PROTOCOL_H
 
-#include <QThread>
 #include <QQmlComponent>
 #include <QObject>
 #include <QQmlContext>
 #include <QProcess>
+
+#include <verdigris>
 
 #include <ossia-qt/js_utilities.hpp>
 #include <ossia/network/generic/wrapped_parameter.hpp>
 #include <ossia/network/base/protocol.hpp>
 #include <ossia/detail/logger.hpp>
 
-namespace ossia
-{
-namespace net
+namespace stdIO
 {
 
 struct stdIO_parameter_data_base
@@ -43,7 +42,7 @@ struct stdIO_parameter_data_base
 
 struct stdIO_parameter_data final
     : public stdIO_parameter_data_base
-    , public parameter_data
+    , public ossia::net::parameter_data
 {
   using base_data_type = stdIO_parameter_data_base;
   stdIO_parameter_data() = default;
@@ -82,7 +81,7 @@ class OSSIA_EXPORT stdIO_wrapper final
   void start(QByteArray arr = QByteArray()) {
     process.start(path, args << arr);
     ossia::logger().info(
-        "Started QProcess: {}", process.errorString().toStdString());
+        "Started QProcess {}", process.readAllStandardError().toStdString());
   }
 
 public:
@@ -93,11 +92,13 @@ public:
     args.removeFirst();
     start();
 
-    connect(this, &stdIO_wrapper::write, this,
-            &stdIO_wrapper::on_write, Qt::QueuedConnection);
+    connect(
+          this, &stdIO_wrapper::write, this, &stdIO_wrapper::on_write,
+          Qt::QueuedConnection);
 
-    connect(&process, &QProcess::readyRead, this,
-            &stdIO_wrapper::on_read, Qt::QueuedConnection);
+    connect(
+          &process, &QProcess::readyReadStandardOutput, this, &stdIO_wrapper::on_read,
+          Qt::QueuedConnection);
   }
   ~stdIO_wrapper();
 
@@ -114,46 +115,46 @@ public:
   {
     while(process.canReadLine())
     {
-      read(process.readLine());
+//      read(process.readLine());
+      qDebug() << process.readLine();
     }
   }; W_SLOT(on_read)
 };
 
-using stdIO_parameter = wrapped_parameter<stdIO_parameter_data>;
+using stdIO_parameter = ossia::net::wrapped_parameter<stdIO_parameter_data>;
+using stdIO_node = ossia::net::wrapped_node<stdIO_parameter_data, stdIO_parameter>;
 
 class OSSIA_EXPORT stdIO_protocol final
     : public QObject
-    , public protocol_base
+    , public ossia::net::protocol_base
 {
-  public:
-    stdIO_protocol(const QString& program, const QByteArray& code);
+public:
+  stdIO_protocol(const QString& program, const QByteArray& code);
 
   ~stdIO_protocol() override;
 
   static stdIO_parameter_data read_data(const QJSValue& js);
 
-private:
-  bool pull(parameter_base&) override;
+  bool pull(ossia::net::parameter_base&) override;
   bool push(
-      const parameter_base& parameter_base,
+      const ossia::net::parameter_base& parameter_base,
       const ossia::value& v) override;
   bool push_raw(
-      const full_parameter_data& parameter_base) override;
-  void set_device(device_base& dev) override;
-  bool observe(parameter_base&, bool b) override;
-  bool update(node_base& node_base) override;
-  void on_read(const QByteArray&);
+      const ossia::net::full_parameter_data& parameter_base) override;
+  void set_device(ossia::net::device_base& dev) override;
+  bool observe(ossia::net::parameter_base&, bool b) override;
+  bool update(ossia::net::node_base& node_base) override;
 
-  QThread m_thread;
+private:
+  void on_read(const QByteArray&);
   QQmlEngine* m_engine{};
   QQmlComponent* m_component{};
 
-  device_base* m_device{};
+  ossia::net::device_base* m_device{};
   QObject* m_object{};
   mutable stdIO_wrapper stdIO;
   QByteArray m_code;
 };
 
 }
-}
-#endif // SHELL_PROTOCOL_H
+#endif // STDIO_PROTOCOL_H
