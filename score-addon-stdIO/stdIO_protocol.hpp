@@ -7,6 +7,7 @@
 #include <QProcess>
 
 #include <verdigris>
+#include <ossia_export.h>
 
 #include <ossia-qt/js_utilities.hpp>
 #include <ossia/network/generic/wrapped_parameter.hpp>
@@ -69,7 +70,7 @@ struct stdIO_parameter_data final
   }
 };
 
-class OSSIA_EXPORT stdIO_wrapper final
+class stdIO_wrapper final
     : public QObject
 {
   W_OBJECT(stdIO_wrapper)
@@ -78,10 +79,9 @@ class OSSIA_EXPORT stdIO_wrapper final
   QString path;
   QStringList args;
 
-  void start(QByteArray arr = QByteArray()) {
+  void start(QByteArray arr = QByteArray())
+  {
     process.start(path, args << arr);
-    ossia::logger().info(
-        "Started QProcess {}", process.readAllStandardError().toStdString());
   }
 
 public:
@@ -90,7 +90,6 @@ public:
     args = pgm.split(' ');
     path = args[0];
     args.removeFirst();
-    start();
 
     connect(
           this, &stdIO_wrapper::write, this, &stdIO_wrapper::on_write,
@@ -99,24 +98,52 @@ public:
     connect(
           &process, &QProcess::readyReadStandardOutput, this, &stdIO_wrapper::on_read,
           Qt::QueuedConnection);
-  }
-  ~stdIO_wrapper();
 
-  void write(QByteArray arg_1) E_SIGNAL(OSSIA_EXPORT, write, arg_1)
-  void read(QByteArray arg_1) E_SIGNAL(OSSIA_EXPORT, read, arg_1)
+    connect(
+          &process, &QProcess::started,
+          []()
+    { ossia::logger().info("QProcess Started"); });
+
+    connect(
+          &process, static_cast<void(QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished),
+          [](int exitCode, QProcess::ExitStatus exitStatus)
+    { if (exitStatus == 0)
+        ossia::logger().info("QProcess exited normaly with exit code {}",
+                             QString::number(exitCode).toStdString());
+      else
+        ossia::logger().info("QProcess crashed");
+    });
+
+    connect(
+          &process, &QProcess::errorOccurred,
+          [](QProcess::ProcessError error)
+    { QString str = QVariant::fromValue(error).toString();
+      ossia::logger().info("QProcess {}", str.toStdString());
+    });
+
+    start();
+  }
+  ~stdIO_wrapper() {};
+
+  void write(QByteArray arg_1) W_SIGNAL(write, arg_1)
+  void read(QByteArray arg_1) W_SIGNAL(read, arg_1)
 
   void on_write(QByteArray b)
   {
-    if (process.state() == QProcess::NotRunning) start(b);
-    else process.write(b);
+    auto state = process.state();
+
+    if (state != QProcess::Starting)
+    {
+      if (state == QProcess::NotRunning) start(b);
+      else process.write(b);
+    }
   }; W_SLOT(on_write)
 
   void on_read()
   {
     while(process.canReadLine())
     {
-//      read(process.readLine());
-      qDebug() << process.readLine();
+      read(process.readLine());
     }
   }; W_SLOT(on_read)
 };
@@ -124,7 +151,7 @@ public:
 using stdIO_parameter = ossia::net::wrapped_parameter<stdIO_parameter_data>;
 using stdIO_node = ossia::net::wrapped_node<stdIO_parameter_data, stdIO_parameter>;
 
-class OSSIA_EXPORT stdIO_protocol final
+class stdIO_protocol final
     : public QObject
     , public ossia::net::protocol_base
 {

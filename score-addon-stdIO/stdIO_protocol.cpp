@@ -6,14 +6,8 @@ W_OBJECT_IMPL(stdIO::stdIO_wrapper)
 namespace stdIO
 {
 
-stdIO_wrapper::~stdIO_wrapper()
-{
-  if (process.state() == QProcess::Running) process.kill();
-}
-
 stdIO_protocol::stdIO_protocol(const QString& program, const QByteArray& code)
-  : ossia::net::protocol_base(flags{})
-  , stdIO{program}
+  : stdIO{program}
   , m_code{code}
 {
   m_engine = new QQmlEngine{};
