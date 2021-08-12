@@ -33,7 +33,7 @@ ProtocolSettingsWidget::ProtocolSettingsWidget(QWidget* parent)
   m_deviceNameEdit->setText("StdIO");
 
   m_programEdit = new State::AddressFragmentLineEdit{this};
-  m_programEdit->setText("/bin/bash -i");
+  m_programEdit->setText("ping");
 
   m_codeEdit = Process::createScriptWidget("JS");
   m_codeEdit->setPlainText("");

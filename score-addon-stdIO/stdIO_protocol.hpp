@@ -79,9 +79,11 @@ class stdIO_wrapper final
   QString path;
   QStringList args;
 
-  void start(QByteArray arr = QByteArray())
+  void start(QString s = QString())
   {
-    process.start(path, args << arr);
+    if (s == "") process.start(path, args);
+    else process.start(path,
+                       QStringList{args} << s.split(' '));
   }
 
 public:
@@ -92,6 +94,11 @@ public:
     args.removeFirst();
 
     connect(
+          &process, &QProcess::started,
+          []()
+    { ossia::logger().info("QProcess Started"); });
+
+    connect(
           this, &stdIO_wrapper::write, this, &stdIO_wrapper::on_write,
           Qt::QueuedConnection);
 
@@ -100,9 +107,15 @@ public:
           Qt::QueuedConnection);
 
     connect(
-          &process, &QProcess::started,
-          []()
-    { ossia::logger().info("QProcess Started"); });
+          &process, &QProcess::readyReadStandardError, this, &stdIO_wrapper::read_error,
+          Qt::QueuedConnection);
+
+    connect(
+          &process, &QProcess::errorOccurred,
+          [](QProcess::ProcessError error)
+    { QString str = QVariant::fromValue(error).toString();
+      ossia::logger().info("QProcess {}", str.toStdString());
+    });
 
     connect(
           &process, static_cast<void(QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished),
@@ -110,15 +123,6 @@ public:
     { if (exitStatus == 0)
         ossia::logger().info("QProcess exited normaly with exit code {}",
                              QString::number(exitCode).toStdString());
-      else
-        ossia::logger().info("QProcess crashed");
-    });
-
-    connect(
-          &process, &QProcess::errorOccurred,
-          [](QProcess::ProcessError error)
-    { QString str = QVariant::fromValue(error).toString();
-      ossia::logger().info("QProcess {}", str.toStdString());
     });
 
     start();
@@ -146,6 +150,11 @@ public:
       read(process.readLine());
     }
   }; W_SLOT(on_read)
+
+  void read_error()
+  { // don't switch read channel
+    qDebug() << process.readAllStandardError();
+  }; W_SLOT(read_error)
 };
 
 using stdIO_parameter = ossia::net::wrapped_parameter<stdIO_parameter_data>;

@@ -108,6 +108,9 @@ bool stdIO_protocol::push(const ossia::net::parameter_base& parameter_base, cons
   auto str = ad.data().write;
   switch (parameter_base.get_value_type())
   {
+  case ossia::val_type::STRING:
+    str.replace("$val", QString::fromStdString(v.get<std::string>()));
+    break;
   case ossia::val_type::FLOAT:
     str.replace("$val", QString::number(v.get<float>(), 'g', 4));
     break;
@@ -148,6 +151,7 @@ bool stdIO_protocol::push(const ossia::net::parameter_base& parameter_base, cons
     throw std::runtime_error("stdIO_protocol::push: bad type");
   }
 
+  str.replace("$name", QString::fromStdString(ad.get_node().get_name()));
   qDebug() << str;
   stdIO.write(str.toUtf8());
   return false;
