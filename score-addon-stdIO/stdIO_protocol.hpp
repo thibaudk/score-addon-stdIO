@@ -7,7 +7,6 @@
 #include <QProcess>
 
 #include <verdigris>
-#include <ossia_export.h>
 
 #include <ossia-qt/js_utilities.hpp>
 #include <ossia/network/generic/wrapped_parameter.hpp>
