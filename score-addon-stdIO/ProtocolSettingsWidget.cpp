@@ -15,7 +15,7 @@
 
 #include <ossia/detail/flat_map.hpp>
 
-#include <QCodeEditor>
+#include <QTextEdit>
 #include <QFormLayout>
 #include <QVariant>
 

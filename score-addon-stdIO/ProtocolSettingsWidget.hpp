@@ -8,9 +8,7 @@
 #include <verdigris>
 
 class QLineEdit;
-class QSpinBox;
-class QTableWidget;
-class QPushButton;
+class QTextEdit;
 
 namespace stdIO
 {
@@ -27,6 +25,6 @@ public:
 private:
   QLineEdit* m_deviceNameEdit{};
   QLineEdit* m_programEdit{};
-  QCodeEditor* m_codeEdit{};
+  QTextEdit* m_codeEdit{};
 };
 }
