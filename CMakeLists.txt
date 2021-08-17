@@ -21,7 +21,6 @@ add_library(score_addon_stdIO
   score-addon-stdIO/ProtocolSettingsWidget.hpp
   score-addon-stdIO/SpecificSettings.hpp
   score-addon-stdIO/SpecificSettingsSerialization.cpp
-
   score_addon_stdIO.hpp
   score_addon_stdIO.cpp
 )
