@@ -1,8 +1,8 @@
 {
-  "src": "<url to the .zip file created by the release script>",
+  "src": "https://github.com/thibaudk/score-addon-stdIO/releases/download/v0.1/score-addon-stdio.zip",
   "name": "std I/O Device",
   "raw_name": "score-addon-stdIO",
-  "version": "1.0",
+  "version": "0.1",
   "kind": "addon",
   "short": "stdIO device add-on",
   "long": "This addon is a wrapper for QProcess, it enables to start a program and communicate with it through the standard I/O, formated as a QML device",
