@@ -1,5 +1,5 @@
 {
-  "src": "<url to the .zip file created by the release script>",
+  "src": "https://github.com/thibaudk/score-addon-stdIO/archive/refs/tags/v0.1.zip",
   "name": "std I/O Device",
   "raw_name": "score-addon-stdIO",
   "version": "1.0",
