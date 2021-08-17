@@ -1,6 +1,6 @@
 #include "score_addon_stdIO.hpp"
 #include <score/plugins/FactorySetup.hpp>
-#include <Protocols/ProtocolLibrary.hpp>
+#include <ossia-qt/js_utilities.hpp>
 
 #include <QQmlEngine>
 
