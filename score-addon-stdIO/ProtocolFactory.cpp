@@ -37,7 +37,7 @@ ProtocolFactory::getEnumerator(const score::DocumentContext& ctx) const
       {"*.qml"},
       ProtocolFactory::static_concreteKey(),
       [](const QByteArray& arr) {
-        return QVariant::fromValue(SpecificSettings{arr});
+        return QVariant::fromValue(SpecificSettings{arr, {}});
       },
       ctx};
 }

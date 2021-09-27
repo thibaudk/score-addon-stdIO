@@ -32,7 +32,7 @@ ProtocolSettingsWidget::ProtocolSettingsWidget(QWidget* parent)
   m_deviceNameEdit = new State::AddressFragmentLineEdit{this};
   m_deviceNameEdit->setText("StdIO");
 
-  m_programEdit = new State::AddressFragmentLineEdit{this};
+  m_programEdit = new QLineEdit{this};
   m_programEdit->setText("ping");
 
   m_codeEdit = Process::createScriptWidget("JS");
