@@ -134,9 +134,7 @@ public:
     // avoid writing to a starting process but alowing it to be killed
     if (auto state = process.state();
         state != QProcess::NotRunning && b == "$kill")
-    {
-        process.kill();
-    }
+      process.kill();
     else if (state == QProcess::NotRunning)
       start(b);
     else if (state == QProcess::Running)
