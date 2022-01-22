@@ -26,5 +26,7 @@ private:
   QLineEdit* m_deviceNameEdit{};
   QLineEdit* m_programEdit{};
   QTextEdit* m_codeEdit{};
+
+  void parseProgram();
 };
 }
