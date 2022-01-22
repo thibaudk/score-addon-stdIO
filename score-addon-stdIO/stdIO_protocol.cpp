@@ -95,7 +95,6 @@ void stdIO_protocol::on_read(const QByteArray& a)
 
 stdIO_protocol::~stdIO_protocol()
 {
-
 }
 
 stdIO_parameter_data stdIO_protocol::read_data(const QJSValue& js) { return js; }
@@ -106,6 +105,7 @@ bool stdIO_protocol::push(const ossia::net::parameter_base& parameter_base, cons
 {
   auto& ad = dynamic_cast<const stdIO_parameter&>(parameter_base);
   auto str = ad.data().write;
+
   switch (parameter_base.get_value_type())
   {
   case ossia::val_type::STRING:

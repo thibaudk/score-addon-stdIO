@@ -123,8 +123,6 @@ public:
         ossia::logger().info("QProcess exited normaly with exit code {}",
                              QString::number(exitCode).toStdString());
     });
-
-    start();
   }
   ~stdIO_wrapper() {};
 
@@ -133,13 +131,17 @@ public:
 
   void on_write(QByteArray b)
   {
-    auto state = process.state();
-
-    if (state != QProcess::Starting)
+    // avoid writing to a starting process but alowing it to be killed
+    if (auto state = process.state();
+        state != QProcess::NotRunning && b == "$kill")
     {
-      if (state == QProcess::NotRunning) start(b);
-      else process.write(b);
+        process.kill();
     }
+    else if (state == QProcess::NotRunning)
+      start(b);
+    else if (state == QProcess::Running)
+      process.write(b);
+
   }; W_SLOT(on_write)
 
   void on_read()

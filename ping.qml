@@ -21,6 +21,11 @@ Ossia.StdIO
                 {
                     name: "stdout",
                     type: Ossia.Type.String
+                },
+                {
+                    name: "killSwitch",
+                    type: Ossia.Type.Impulse,
+                    write: "$kill"
                 }
             ]
         }
