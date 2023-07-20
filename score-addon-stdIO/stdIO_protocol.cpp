@@ -120,8 +120,8 @@ bool stdIO_protocol::push(const ossia::net::parameter_base& parameter_base, cons
   case ossia::val_type::BOOL:
     str.replace("$val", v.get<bool>() ? "1" : "0");
     break;
-  case ossia::val_type::CHAR:
-    str.replace("$val", QString{v.get<char>()});
+  case ossia::val_type::MAP:
+    str.replace("val", "TODO");
     break;
   case ossia::val_type::VEC2F:
   {
